@@ -1,0 +1,16 @@
+﻿using Domain.DTOs;
+
+namespace Service.Abstractions;
+
+public interface ICustomerService
+{
+    Task<IEnumerable<CustomerDto>> GetAllAsync();
+
+    Task<CustomerDto?> GetByIdAsync(int customerId);
+
+    Task<CustomerDto> CreateAsync(CustomerDto customerForCreationDto);
+
+    Task UpdateAsync(int customerId, CustomerDto customerForUpdateDto);
+
+    Task DeleteAsync(int customerId);
+}
