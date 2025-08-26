@@ -2,15 +2,6 @@
 
 namespace Service.Abstractions;
 
-public interface IProductService
+public interface IProductService : IServiceBase<ProductDto>
 {
-    Task<IEnumerable<ProductDto>> GetAllAsync();
-
-    Task<ProductDto?> GetByIdAsync(int productId);
-
-    Task<ProductDto> CreateAsync(ProductDto productForCreationDto);
-
-    Task UpdateAsync(int productId, ProductDto productForUpdateDto);
-
-    Task DeleteAsync(int productId);
 }

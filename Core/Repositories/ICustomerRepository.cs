@@ -2,13 +2,6 @@
 
 namespace Domain.Repositories;
 
-public interface ICustomerRepository
+public interface ICustomerRepository : IRepositoryBase<Customer>
 {
-    Task<IEnumerable<Customer>> GetAllAsync();
-    Task<Customer?> GetByIdAsync(int customerId);
-    void Insert(Customer customer);
-    void Remove(Customer customer);
-    Task<bool> IdExists(int id);
-    Task<bool> PhoneExists(string phone);
-    Task<bool> EmailExists(string email);
 }

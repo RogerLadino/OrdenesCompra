@@ -42,19 +42,23 @@ public class ProductService : IProductService
     {
         var product = productForCreationDto.Adapt<Product>();
 
-        if (await _repositoryManager.ProductRepository.IdExists(product.Id))
+        var productIdExists = await _repositoryManager.ProductRepository.GetByIdAsync(product.Id) != null;
+
+        if (productIdExists)
         {
             return null;
         }
 
-        if (await _repositoryManager.ProductRepository.NameExists(product.ProductName))
+        var nameExists = await _repositoryManager.ProductRepository.FindByConditionAsync(p => p.ProductName.Equals(product.ProductName)) != null;
+
+        if (nameExists)
         {
             return null;
         }
 
-        _repositoryManager.ProductRepository.Insert(product);
+        _repositoryManager.ProductRepository.Add(product);
 
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
 
         return product.Adapt<ProductDto>();
     }
@@ -70,17 +74,14 @@ public class ProductService : IProductService
 
         productForUpdateDto.Adapt(product);
 
-        if (await _repositoryManager.ProductRepository.IdExists(product.Id))
+        var nameExists = await _repositoryManager.ProductRepository.FindByConditionAsync(p => p.ProductName.Equals(product.ProductName)) != null;
+
+        if (nameExists)
         {
             return;
         }
 
-        if (await _repositoryManager.ProductRepository.NameExists(product.ProductName))
-        {
-            return;
-        }
-
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int productId)
@@ -94,6 +95,6 @@ public class ProductService : IProductService
 
         _repositoryManager.ProductRepository.Remove(product);
 
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 }

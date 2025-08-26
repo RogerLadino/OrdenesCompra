@@ -42,24 +42,30 @@ public class CustomerService : ICustomerService
     {
         var customer = customerForCreationDto.Adapt<Customer>();
 
-        if (await _repositoryManager.CustomerRepository.IdExists(customer.Id))
+        var idExists = await _repositoryManager.CustomerRepository.GetByIdAsync(customer.Id) != null;
+
+        if (idExists)
         {
             return null;
         }
 
-        if(await _repositoryManager.CustomerRepository.EmailExists(customer.Email))
+        var emailExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Email.Equals(customer.Email)) != null;
+
+        if (emailExists)
         {
             return null;
         }
 
-        if(await _repositoryManager.CustomerRepository.PhoneExists(customer.Phone))
+        var phoneExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Phone.Equals(customer.Phone)) != null;
+
+        if (phoneExists)
         {
             return null;
         }
 
-        _repositoryManager.CustomerRepository.Insert(customer);
+        _repositoryManager.CustomerRepository.Add(customer);
 
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
 
         return customer.Adapt<CustomerDto>();
     }
@@ -75,22 +81,21 @@ public class CustomerService : ICustomerService
 
         customerForUpdateDto.Adapt(customer);
 
-        if (await _repositoryManager.CustomerRepository.IdExists(customer.Id))
+        var emailExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Email.Equals(customer.Email)) != null;
+
+        if (emailExists)
         {
             return;
         }
 
-        if (await _repositoryManager.CustomerRepository.EmailExists(customer.Email))
+        var phoneExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Phone.Equals(customer.Phone)) != null;
+
+        if (phoneExists)
         {
             return;
         }
 
-        if (await _repositoryManager.CustomerRepository.PhoneExists(customer.Phone))
-        {
-            return;
-        }
-
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int customerId)
@@ -104,6 +109,6 @@ public class CustomerService : ICustomerService
 
         _repositoryManager.CustomerRepository.Remove(customer);
 
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 }
