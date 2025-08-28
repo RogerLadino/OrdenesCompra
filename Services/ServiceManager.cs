@@ -7,6 +7,7 @@ public sealed class ServiceManager : IServiceManager
     private readonly Lazy<ICustomerService> _lazyCustomerService;
     private readonly Lazy<IProductService> _lazyProductService;
     private readonly Lazy<ISupplierService> _lazySupplierService;
+    private readonly Lazy<IOrderService> _lazyOrderService;
 
     // Las clases serán creadas de manera "perezosa"
     public ServiceManager(IRepositoryManager repositoryManager)
@@ -14,9 +15,11 @@ public sealed class ServiceManager : IServiceManager
         _lazyCustomerService = new Lazy<ICustomerService>(() => new CustomerService(repositoryManager));
         _lazyProductService = new Lazy<IProductService>(() => new ProductService(repositoryManager));
         _lazySupplierService = new Lazy<ISupplierService>(() => new SupplierService(repositoryManager));
+        _lazyOrderService = new Lazy<IOrderService>(() => new OrderService(repositoryManager));
     }
 
     public ICustomerService CustomerService => _lazyCustomerService.Value;
     public IProductService ProductService => _lazyProductService.Value;
     public ISupplierService SupplierService => _lazySupplierService.Value;
+    public IOrderService OrderService => _lazyOrderService.Value;
 }

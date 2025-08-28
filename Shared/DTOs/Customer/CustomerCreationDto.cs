@@ -1,11 +1,9 @@
 ﻿using Domain.Entities;
 using System.ComponentModel.DataAnnotations;
-namespace Shared.DTOs;
+namespace Shared.DTOs.Customers;
 
-public partial class CustomerDto
+public partial class CustomerCreationDto
 {
-    public int Id { get; set; }
-
     public string FirstName { get; set; } = null!;
 
     public string LastName { get; set; } = null!;
@@ -21,6 +19,4 @@ public partial class CustomerDto
     public string? Email { get; set; }
 
     public DateTime? BirthDate { get; set; }
-
-    public ICollection<Order> Orders { get; set; } = new List<Order>();
 }

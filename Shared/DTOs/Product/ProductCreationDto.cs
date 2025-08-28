@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Shared.DTOs;
+namespace Shared.DTOs.Product;
 public class ProductCreationDto
 {
     public string ProductName { get; set; } = null!;
@@ -12,8 +12,4 @@ public class ProductCreationDto
     public string? Package { get; set; }
 
     public bool IsDiscontinued { get; set; }
-
-    public virtual ICollection<OrderItem>? OrderItems { get; set; } = new List<OrderItem>();
-
-    public virtual SupplierDto? Supplier { get; set; } = null!;
 }

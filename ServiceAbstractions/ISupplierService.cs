@@ -1,4 +1,4 @@
-﻿using Shared.DTOs;
+﻿using Shared.DTOs.Supplier;
 
 namespace Service.Abstractions;
 

@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Shared.DTOs.Product;
 
-namespace Shared.DTOs;
+namespace Shared.DTOs.Supplier;
 
 public class SupplierCreationDto
 {
@@ -28,5 +29,5 @@ public class SupplierCreationDto
 
     public string? Fax { get; set; }
 
-    public virtual ICollection<Product>? Products { get; set; } = new List<Product>();
+    public virtual ICollection<ProductDto>? Products { get; set; } = new List<ProductDto>();
 }

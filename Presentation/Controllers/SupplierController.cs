@@ -1,6 +1,6 @@
-﻿using Shared.DTOs;
-using Service.Abstractions;
+﻿using Service.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using Shared.DTOs.Supplier;
 
 [ApiController]
 [Route("api/suppliers")]
