@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
@@ -38,16 +38,9 @@ public class CustomerService : ICustomerService
         return customerDto;
     }
 
-    public async Task<CustomerDto> CreateAsync(CustomerDto customerForCreationDto)
+    public async Task<CustomerDto> CreateAsync(CustomerCreationDto customerForCreationDto)
     {
         var customer = customerForCreationDto.Adapt<Customer>();
-
-        var idExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Id.Equals(customer.Id));
-
-        if (idExists)
-        {
-            return null;
-        }
 
         var emailExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Email.Equals(customer.Email));
 
@@ -70,6 +63,7 @@ public class CustomerService : ICustomerService
         return customer.Adapt<CustomerDto>();
     }
 
+ 
     public async Task UpdateAsync(int customerId, CustomerDto customerForUpdateDto)
     {
         var customer = await _repositoryManager.CustomerRepository.GetByIdAsync(customerId);
@@ -111,4 +105,5 @@ public class CustomerService : ICustomerService
 
         await _repositoryManager.SaveChangesAsync();
     }
+
 }

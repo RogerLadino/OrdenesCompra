@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Service.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +29,7 @@ public class ProductsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateProduct([FromBody] ProductDto productForCreationDto)
+    public async Task<IActionResult> CreateProduct([FromBody] ProductCreationDto productForCreationDto)
     {
         var createdProduct = await _serviceManager.ProductService.CreateAsync(productForCreationDto);
         return CreatedAtAction(nameof(GetProductById), new { productId = createdProduct.Id }, createdProduct);

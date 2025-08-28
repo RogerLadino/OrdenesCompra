@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
@@ -38,16 +38,9 @@ public class ProductService : IProductService
         return productDto;
     }
 
-    public async Task<ProductDto?> CreateAsync(ProductDto productForCreationDto)
+    public async Task<ProductDto?> CreateAsync(ProductCreationDto productForCreationDto)
     {
         var product = productForCreationDto.Adapt<Product>();
-
-        var productIdExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.Id.Equals(product.Id));
-
-        if (productIdExists)
-        {
-            return null;
-        }
 
         var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
 

@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
@@ -28,14 +28,9 @@ public class SupplierService : ISupplierService
         return supplier.Adapt<SupplierDto>();
     }
 
-    public async Task<SupplierDto?> CreateAsync(SupplierDto supplierForCreationDto)
+    public async Task<SupplierDto?> CreateAsync(SupplierCreationDto supplierForCreationDto)
     {
         var supplier = supplierForCreationDto.Adapt<Supplier>();
-
-        var idExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Id.Equals(supplier.Id));
-
-        if (idExists)
-            return null;
 
         var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
 

@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 using System.ComponentModel.DataAnnotations;
-namespace Domain.DTOs;
+namespace Shared.DTOs;
 
 public partial class CustomerDto
 {

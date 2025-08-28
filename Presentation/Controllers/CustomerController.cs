@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Service.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +29,7 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateCustomer([FromBody] CustomerDto customerForCreationDto)
+    public async Task<IActionResult> CreateCustomer([FromBody] CustomerCreationDto customerForCreationDto)
     {
         var createdCustomer = await _serviceManager.CustomerService.CreateAsync(customerForCreationDto);
         return CreatedAtAction(nameof(GetCustomerById), new { customerId = createdCustomer.Id }, createdCustomer);
