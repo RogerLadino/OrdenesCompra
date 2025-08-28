@@ -18,39 +18,26 @@ public class ProductService : IProductService
     public async Task<IEnumerable<ProductDto>> GetAllAsync()
     {
         var products = await _repositoryManager.ProductRepository.GetAllAsync();
-
-        var productDtos = products.Adapt<IEnumerable<ProductDto>>();
-
-        return productDtos;
+        return products.Adapt<IEnumerable<ProductDto>>();
     }
 
     public async Task<ProductDto?> GetByIdAsync(int productId)
     {
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
-
-        if (product is null)
-        {
-            return null;
-        }
-
-        var productDto = product.Adapt<ProductDto>();
-
-        return productDto;
+        return product?.Adapt<ProductDto>();
     }
 
-    public async Task<ProductDto?> CreateAsync(ProductCreationDto productForCreationDto)
+    public async Task<ProductDto> CreateAsync(ProductCreationDto productForCreationDto)
     {
         var product = productForCreationDto.Adapt<Product>();
 
-        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
+        var nameExists = await _repositoryManager.ProductRepository
+            .AnyAsync(p => p.ProductName.Equals(product.ProductName));
 
         if (nameExists)
-        {
             return null;
-        }
 
         _repositoryManager.ProductRepository.Add(product);
-
         await _repositoryManager.SaveChangesAsync();
 
         return product.Adapt<ProductDto>();
@@ -61,18 +48,15 @@ public class ProductService : IProductService
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
 
         if (product is null)
-        {
             return;
-        }
 
         productForUpdateDto.Adapt(product);
 
-        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
+        var nameExists = await _repositoryManager.ProductRepository
+            .AnyAsync(p => p.ProductName.Equals(product.ProductName) && p.Id != productId);
 
         if (nameExists)
-        {
             return;
-        }
 
         await _repositoryManager.SaveChangesAsync();
     }
@@ -82,12 +66,9 @@ public class ProductService : IProductService
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
 
         if (product is null)
-        {
             return;
-        }
 
         _repositoryManager.ProductRepository.Remove(product);
-
         await _repositoryManager.SaveChangesAsync();
     }
 }
