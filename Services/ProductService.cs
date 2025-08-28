@@ -42,14 +42,14 @@ public class ProductService : IProductService
     {
         var product = productForCreationDto.Adapt<Product>();
 
-        var productIdExists = await _repositoryManager.ProductRepository.GetByIdAsync(product.Id) != null;
+        var productIdExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.Id.Equals(product.Id));
 
         if (productIdExists)
         {
             return null;
         }
 
-        var nameExists = await _repositoryManager.ProductRepository.FindByConditionAsync(p => p.ProductName.Equals(product.ProductName)) != null;
+        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
 
         if (nameExists)
         {
@@ -74,7 +74,7 @@ public class ProductService : IProductService
 
         productForUpdateDto.Adapt(product);
 
-        var nameExists = await _repositoryManager.ProductRepository.FindByConditionAsync(p => p.ProductName.Equals(product.ProductName)) != null;
+        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
 
         if (nameExists)
         {

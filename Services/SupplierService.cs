@@ -32,22 +32,22 @@ public class SupplierService : ISupplierService
     {
         var supplier = supplierForCreationDto.Adapt<Supplier>();
 
-        var idExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.Id.Equals(supplier.Id)) != null;
+        var idExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Id.Equals(supplier.Id));
 
         if (idExists)
             return null;
 
-        var companyNameExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.CompanyName.Equals(supplier.CompanyName)) != null;
+        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
 
         if (companyNameExists)
             return null;
 
-        var emailExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.Email.Equals(supplier.Email)) != null;
+        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
 
         if (emailExists)
             return null;
 
-        var phoneExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.Phone.Equals(supplier.Phone)) != null;
+        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
 
         if (phoneExists)
             return null;
@@ -66,17 +66,17 @@ public class SupplierService : ISupplierService
 
         supplierForUpdateDto.Adapt(supplier);
 
-        var companyNameExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.CompanyName.Equals(supplier.CompanyName)) != null;
+        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
 
         if (companyNameExists)
             return;
 
-        var emailExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.Email.Equals(supplier.Email)) != null;
+        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
 
         if (emailExists)
             return;
 
-        var phoneExists = await _repositoryManager.SupplierRepository.FindByConditionAsync(s => s.Phone.Equals(supplier.Phone)) != null;
+        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
 
         if (phoneExists)
             return;

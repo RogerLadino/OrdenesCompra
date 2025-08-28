@@ -31,6 +31,11 @@ public abstract class RepositoryBase<TEntity> : IRepositoryBase<TEntity> where T
         return await _dbSet.Where(expression).ToListAsync();
     }
 
+    public async Task<bool> AnyAsync(Expression<Func<TEntity, bool>> expression)
+    {
+        return await _dbSet.AnyAsync(expression);
+    }
+
     public void Add(TEntity entity)
     {
         _dbSet.Add(entity);

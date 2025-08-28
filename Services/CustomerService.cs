@@ -42,21 +42,21 @@ public class CustomerService : ICustomerService
     {
         var customer = customerForCreationDto.Adapt<Customer>();
 
-        var idExists = await _repositoryManager.CustomerRepository.GetByIdAsync(customer.Id) != null;
+        var idExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Id.Equals(customer.Id));
 
         if (idExists)
         {
             return null;
         }
 
-        var emailExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Email.Equals(customer.Email)) != null;
+        var emailExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Email.Equals(customer.Email));
 
         if (emailExists)
         {
             return null;
         }
 
-        var phoneExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Phone.Equals(customer.Phone)) != null;
+        var phoneExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Phone.Equals(customer.Phone));
 
         if (phoneExists)
         {
@@ -81,14 +81,14 @@ public class CustomerService : ICustomerService
 
         customerForUpdateDto.Adapt(customer);
 
-        var emailExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Email.Equals(customer.Email)) != null;
+        var emailExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Email.Equals(customer.Email));
 
         if (emailExists)
         {
             return;
         }
 
-        var phoneExists = await _repositoryManager.CustomerRepository.FindByConditionAsync(c => c.Phone.Equals(customer.Phone)) != null;
+        var phoneExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Phone.Equals(customer.Phone));
 
         if (phoneExists)
         {
