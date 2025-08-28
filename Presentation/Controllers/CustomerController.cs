@@ -1,6 +1,8 @@
-﻿using Service.Abstractions;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Service.Abstractions;
 using Shared.DTOs.Customers;
+using Shared.DTOs.Order;
 
 [ApiController]
 [Route("api/customers")]
@@ -46,6 +48,28 @@ public class CustomersController : ControllerBase
     public async Task<IActionResult> DeleteCustomer(int customerId)
     {
         await _serviceManager.CustomerService.DeleteAsync(customerId);
+        return NoContent();
+    }
+
+    [HttpPatch("{customerId:int}")]
+    public async Task<IActionResult> PatchCustomer(int customerId, [FromBody] JsonPatchDocument<CustomerDto> patchDoc)
+    {
+        if (patchDoc is null)
+        {
+            return BadRequest();
+        }
+
+        var customerDto = await _serviceManager.CustomerService.GetByIdAsync(customerId);
+
+        if (customerDto is null)
+        {
+            return NotFound();
+        }
+
+        patchDoc.ApplyTo(customerDto);
+
+        await _serviceManager.CustomerService.UpdateAsync(customerId, customerDto);
+
         return NoContent();
     }
 }
