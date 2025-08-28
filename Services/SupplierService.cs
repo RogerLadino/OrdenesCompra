@@ -1,8 +1,8 @@
-﻿using Shared.DTOs;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
 using Mapster;
+using Shared.DTOs.Supplier;
 
 namespace Services;
 
