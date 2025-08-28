@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
@@ -28,24 +28,28 @@ public class SupplierService : ISupplierService
         return supplier.Adapt<SupplierDto>();
     }
 
-    public async Task<SupplierDto?> CreateAsync(SupplierDto supplierForCreationDto)
+    public async Task<SupplierDto?> CreateAsync(SupplierCreationDto supplierForCreationDto)
     {
         var supplier = supplierForCreationDto.Adapt<Supplier>();
 
-        if (await _repositoryManager.SupplierRepository.IdExists(supplier.Id))
+        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
+
+        if (companyNameExists)
             return null;
 
-        if (await _repositoryManager.SupplierRepository.CompanyNameExists(supplier.CompanyName))
+        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
+
+        if (emailExists)
             return null;
 
-        if (await _repositoryManager.SupplierRepository.EmailExists(supplier.Email))
+        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
+
+        if (phoneExists)
             return null;
 
-        if (await _repositoryManager.SupplierRepository.PhoneExists(supplier.Phone))
-            return null;
-
-        _repositoryManager.SupplierRepository.Insert(supplier);
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        _repositoryManager.SupplierRepository.Add(supplier);
+        
+        await _repositoryManager.SaveChangesAsync();
 
         return supplier.Adapt<SupplierDto>();
     }
@@ -57,19 +61,22 @@ public class SupplierService : ISupplierService
 
         supplierForUpdateDto.Adapt(supplier);
 
-        if (await _repositoryManager.SupplierRepository.IdExists(supplier.Id))
+        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
+
+        if (companyNameExists)
             return;
 
-        if (await _repositoryManager.SupplierRepository.CompanyNameExists(supplier.CompanyName))
+        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
+
+        if (emailExists)
             return;
 
-        if (await _repositoryManager.SupplierRepository.EmailExists(supplier.Email))
+        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
+
+        if (phoneExists)
             return;
 
-        if (await _repositoryManager.SupplierRepository.PhoneExists(supplier.Phone))
-            return;
-
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int supplierId)
@@ -78,6 +85,6 @@ public class SupplierService : ISupplierService
         if (supplier is null) return;
 
         _repositoryManager.SupplierRepository.Remove(supplier);
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 }

@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Domain.csproj" />
     <ProjectReference Include="..\ServiceAbstractions\Service.Abstractions.csproj" />
+    <ProjectReference Include="..\Shared\Shared.csproj" />
   </ItemGroup>
 
 </Project>

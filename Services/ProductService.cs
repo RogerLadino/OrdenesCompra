@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Domain.Entities;
 using Domain.Repositories;
 using Service.Abstractions;
@@ -38,23 +38,20 @@ public class ProductService : IProductService
         return productDto;
     }
 
-    public async Task<ProductDto?> CreateAsync(ProductDto productForCreationDto)
+    public async Task<ProductDto?> CreateAsync(ProductCreationDto productForCreationDto)
     {
         var product = productForCreationDto.Adapt<Product>();
 
-        if (await _repositoryManager.ProductRepository.IdExists(product.Id))
+        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
+
+        if (nameExists)
         {
             return null;
         }
 
-        if (await _repositoryManager.ProductRepository.NameExists(product.ProductName))
-        {
-            return null;
-        }
+        _repositoryManager.ProductRepository.Add(product);
 
-        _repositoryManager.ProductRepository.Insert(product);
-
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
 
         return product.Adapt<ProductDto>();
     }
@@ -70,17 +67,14 @@ public class ProductService : IProductService
 
         productForUpdateDto.Adapt(product);
 
-        if (await _repositoryManager.ProductRepository.IdExists(product.Id))
+        var nameExists = await _repositoryManager.ProductRepository.AnyAsync(p => p.ProductName.Equals(product.ProductName));
+
+        if (nameExists)
         {
             return;
         }
 
-        if (await _repositoryManager.ProductRepository.NameExists(product.ProductName))
-        {
-            return;
-        }
-
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int productId)
@@ -94,6 +88,6 @@ public class ProductService : IProductService
 
         _repositoryManager.ProductRepository.Remove(product);
 
-        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        await _repositoryManager.SaveChangesAsync();
     }
 }

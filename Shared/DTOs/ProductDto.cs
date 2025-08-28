@@ -1,6 +1,6 @@
 ﻿using Domain.Entities;
 
-namespace Domain.DTOs;
+namespace Shared.DTOs;
 public class ProductDto
 {
     public int Id { get; set; }

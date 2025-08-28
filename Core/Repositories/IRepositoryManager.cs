@@ -7,5 +7,5 @@ public interface IRepositoryManager
     ICustomerRepository CustomerRepository { get; }
     IProductRepository ProductRepository { get; }
     ISupplierRepository SupplierRepository { get; }
-    IUnitOfWork UnitOfWork { get; }
+    Task SaveChangesAsync();
 }

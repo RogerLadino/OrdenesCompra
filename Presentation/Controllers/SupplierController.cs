@@ -1,4 +1,4 @@
-﻿using Domain.DTOs;
+﻿using Shared.DTOs;
 using Service.Abstractions;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,7 +29,7 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateSupplier([FromBody] SupplierDto supplierForCreationDto)
+    public async Task<IActionResult> CreateSupplier([FromBody] SupplierCreationDto supplierForCreationDto)
     {
         var createdSupplier = await _serviceManager.SupplierService.CreateAsync(supplierForCreationDto);
         return CreatedAtAction(nameof(GetSupplierById), new { supplierId = createdSupplier.Id }, createdSupplier);
