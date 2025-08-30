@@ -30,5 +30,10 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .HasForeignKey(d => d.CustomerId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_ORDER_REFERENCE_CUSTOMER");
+
+        builder.HasMany(o => o.OrderItems)
+            .WithOne(oi => oi.Order)
+            .HasForeignKey(oi => oi.OrderId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

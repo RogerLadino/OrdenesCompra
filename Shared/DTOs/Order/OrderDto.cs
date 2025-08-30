@@ -17,7 +17,5 @@ public partial class OrderDto
 
     public decimal? TotalAmount { get; set; }
 
-    public virtual CustomerDto Customer { get; set; } = null!;
-
     public virtual ICollection<OrderItemDto> OrderItems { get; set; } = new List<OrderItemDto>();
 }
