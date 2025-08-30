@@ -23,13 +23,13 @@ public class OrderItemConfiguration : IEntityTypeConfiguration<OrderItem>
         builder.HasOne(d => d.Order)
             .WithMany(p => p.OrderItems)
             .HasForeignKey(d => d.OrderId)
-            .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_ORDERITE_REFERENCE_ORDER");
+            .OnDelete(DeleteBehavior.Cascade)
+            .HasConstraintName("FK_ORDERITEM_REFERENCE_ORDER");
 
         builder.HasOne(d => d.Product)
             .WithMany(p => p.OrderItems)
             .HasForeignKey(d => d.ProductId)
             .OnDelete(DeleteBehavior.ClientSetNull)
-            .HasConstraintName("FK_ORDERITE_REFERENCE_PRODUCT");
+            .HasConstraintName("FK_ORDERITEM_REFERENCE_PRODUCT");
     }
 }

@@ -1,5 +1,6 @@
-﻿using Service.Abstractions;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Service.Abstractions;
 using Shared.DTOs.Supplier;
 
 [ApiController]
@@ -46,6 +47,28 @@ public class SuppliersController : ControllerBase
     public async Task<IActionResult> DeleteSupplier(int supplierId)
     {
         await _serviceManager.SupplierService.DeleteAsync(supplierId);
+        return NoContent();
+    }
+
+    [HttpPatch("{supplierId:int}")]
+    public async Task<IActionResult> PatchSupplier(int supplierId, [FromBody] JsonPatchDocument<SupplierDto> patchDoc)
+    {
+        if (patchDoc is null)
+        {
+            return BadRequest();
+        }
+
+        var supplierDto = await _serviceManager.SupplierService.GetByIdAsync(supplierId);
+
+        if (supplierDto is null)
+        {
+            return NotFound();
+        }
+
+        patchDoc.ApplyTo(supplierDto);
+
+        await _serviceManager.SupplierService.UpdateAsync(supplierId, supplierDto);
+
         return NoContent();
     }
 }

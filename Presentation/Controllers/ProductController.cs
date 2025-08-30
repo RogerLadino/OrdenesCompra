@@ -1,5 +1,6 @@
-﻿using Service.Abstractions;
+﻿using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Service.Abstractions;
 using Shared.DTOs.Product;
 
 [ApiController]
@@ -46,6 +47,28 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> DeleteProduct(int productId)
     {
         await _serviceManager.ProductService.DeleteAsync(productId);
+        return NoContent();
+    }
+
+    [HttpPatch("{productId:int}")]
+    public async Task<IActionResult> PatchProduct(int productId, [FromBody] JsonPatchDocument<ProductDto> patchDoc)
+    {
+        if (patchDoc is null)
+        {
+            return BadRequest();
+        }
+
+        var productDto = await _serviceManager.ProductService.GetByIdAsync(productId);
+
+        if (productDto is null)
+        {
+            return NotFound();
+        }
+
+        patchDoc.ApplyTo(productDto);
+
+        await _serviceManager.ProductService.UpdateAsync(productId, productDto);
+
         return NoContent();
     }
 }

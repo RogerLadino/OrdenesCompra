@@ -1,4 +1,5 @@
 ﻿using Domain.Entities;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Service.Abstractions;
 using Shared.DTOs.Order;
@@ -53,6 +54,28 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> DeleteOrder(int orderId)
     {
         await _serviceManager.OrderService.DeleteAsync(orderId);
+        return NoContent();
+    }
+
+    [HttpPatch("{orderId:int}")]
+    public async Task<IActionResult> PatchOrder(int orderId, [FromBody] JsonPatchDocument<OrderDto> patchDoc)
+    {
+        if (patchDoc is null)
+        {
+            return BadRequest();
+        }
+
+        var orderDto = await _serviceManager.OrderService.GetByIdAsync(orderId);
+
+        if (orderDto is null)
+        {
+            return NotFound();
+        }
+
+        patchDoc.ApplyTo(orderDto);
+
+        await _serviceManager.OrderService.UpdateAsync(orderId, orderDto);
+
         return NoContent();
     }
 }

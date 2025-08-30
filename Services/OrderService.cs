@@ -18,18 +18,13 @@ public class OrderService : IOrderService
     public async Task<IEnumerable<OrderDto>> GetAllAsync()
     {
         var orders = await _repositoryManager.OrderRepository.GetAllAsync();
-        var orderDtos = orders.Adapt<IEnumerable<OrderDto>>();
-        return orderDtos;
+        return orders.Adapt<IEnumerable<OrderDto>>();
     }
 
     public async Task<OrderDto?> GetByIdAsync(int orderId)
     {
         var order = await _repositoryManager.OrderRepository.GetByIdAsync(orderId);
-
-        if (order is null)
-            return null;
-
-        return order.Adapt<OrderDto>();
+        return order?.Adapt<OrderDto>();
     }
 
     public async Task<OrderDto?> CreateAsync(OrderCreationDto orderForCreationDto)

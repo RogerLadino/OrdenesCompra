@@ -4,6 +4,7 @@ using OrdenesCompra.Extensions;
 using Persistence;
 using Persistence.Repositories;
 using Service.Abstractions;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.ConfigureCors();
 
 // Add services to the container.
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
 builder.Services.AddDbContext<RepositoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

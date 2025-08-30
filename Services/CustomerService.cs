@@ -18,38 +18,29 @@ public class CustomerService : ICustomerService
     public async Task<IEnumerable<CustomerDto>> GetAllAsync()
     {
         var customers = await _repositoryManager.CustomerRepository.GetAllAsync();
-
-        var customerDtos = customers.Adapt<IEnumerable<CustomerDto>>();
-
-        return customerDtos;
+        return customers.Adapt<IEnumerable<CustomerDto>>();
     }
 
     public async Task<CustomerDto?> GetByIdAsync(int customerId)
     {
         var customer = await _repositoryManager.CustomerRepository.GetByIdAsync(customerId);
-
-        if (customer is null)
-        {
-            return null;
-        }
-
-        var customerDto = customer.Adapt<CustomerDto>();
-
-        return customerDto;
+        return customer?.Adapt<CustomerDto>();
     }
 
     public async Task<CustomerDto> CreateAsync(CustomerCreationDto customerForCreationDto)
     {
         var customer = customerForCreationDto.Adapt<Customer>();
 
-        var emailExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Email.Equals(customer.Email));
+        var emailExists = await _repositoryManager.CustomerRepository
+            .AnyAsync(c => c.Email.Equals(customer.Email));
 
         if (emailExists)
         {
             return null;
         }
 
-        var phoneExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Phone.Equals(customer.Phone));
+        var phoneExists = await _repositoryManager.CustomerRepository
+            .AnyAsync(c => c.Phone.Equals(customer.Phone));
 
         if (phoneExists)
         {
@@ -57,32 +48,32 @@ public class CustomerService : ICustomerService
         }
 
         _repositoryManager.CustomerRepository.Add(customer);
-
         await _repositoryManager.SaveChangesAsync();
 
         return customer.Adapt<CustomerDto>();
     }
 
- 
     public async Task UpdateAsync(int customerId, CustomerDto customerForUpdateDto)
     {
         var customer = await _repositoryManager.CustomerRepository.GetByIdAsync(customerId);
 
         if (customer is null)
         {
-            return;
+            throw new KeyNotFoundException("Customer not found.");
         }
 
         customerForUpdateDto.Adapt(customer);
 
-        var emailExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Email.Equals(customer.Email));
+        var emailExists = await _repositoryManager.CustomerRepository
+            .AnyAsync(c => c.Email.Equals(customer.Email) && c.Id != customerId);
 
         if (emailExists)
         {
             return;
         }
 
-        var phoneExists = await _repositoryManager.CustomerRepository.AnyAsync(c => c.Phone.Equals(customer.Phone));
+        var phoneExists = await _repositoryManager.CustomerRepository
+            .AnyAsync(c => c.Phone.Equals(customer.Phone) && c.Id != customerId);
 
         if (phoneExists)
         {
@@ -102,8 +93,6 @@ public class CustomerService : ICustomerService
         }
 
         _repositoryManager.CustomerRepository.Remove(customer);
-
         await _repositoryManager.SaveChangesAsync();
     }
-
 }

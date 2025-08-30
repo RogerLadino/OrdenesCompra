@@ -24,31 +24,32 @@ public class SupplierService : ISupplierService
     public async Task<SupplierDto?> GetByIdAsync(int supplierId)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
-        if (supplier is null) return null;
-        return supplier.Adapt<SupplierDto>();
+        return supplier?.Adapt<SupplierDto>();
     }
 
-    public async Task<SupplierDto?> CreateAsync(SupplierCreationDto supplierForCreationDto)
+    public async Task<SupplierDto> CreateAsync(SupplierCreationDto supplierForCreationDto)
     {
         var supplier = supplierForCreationDto.Adapt<Supplier>();
 
-        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
+        var companyNameExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
 
         if (companyNameExists)
             return null;
 
-        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
+        var emailExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.Email.Equals(supplier.Email));
 
         if (emailExists)
             return null;
 
-        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
+        var phoneExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.Phone.Equals(supplier.Phone));
 
         if (phoneExists)
             return null;
 
         _repositoryManager.SupplierRepository.Add(supplier);
-        
         await _repositoryManager.SaveChangesAsync();
 
         return supplier.Adapt<SupplierDto>();
@@ -57,21 +58,25 @@ public class SupplierService : ISupplierService
     public async Task UpdateAsync(int supplierId, SupplierDto supplierForUpdateDto)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
-        if (supplier is null) return;
+        if (supplier is null)
+            return;
 
         supplierForUpdateDto.Adapt(supplier);
 
-        var companyNameExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
+        var companyNameExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName) && s.Id != supplierId);
 
         if (companyNameExists)
             return;
 
-        var emailExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Email.Equals(supplier.Email));
+        var emailExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.Email.Equals(supplier.Email) && s.Id != supplierId);
 
         if (emailExists)
             return;
 
-        var phoneExists = await _repositoryManager.SupplierRepository.AnyAsync(s => s.Phone.Equals(supplier.Phone));
+        var phoneExists = await _repositoryManager.SupplierRepository
+            .AnyAsync(s => s.Phone.Equals(supplier.Phone) && s.Id != supplierId);
 
         if (phoneExists)
             return;
@@ -82,7 +87,8 @@ public class SupplierService : ISupplierService
     public async Task DeleteAsync(int supplierId)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
-        if (supplier is null) return;
+        if (supplier is null)
+            return;
 
         _repositoryManager.SupplierRepository.Remove(supplier);
         await _repositoryManager.SaveChangesAsync();
