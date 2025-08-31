@@ -24,6 +24,8 @@ internal sealed class GlobalExceptionHandler(
             ProductNotFoundException => StatusCodes.Status404NotFound,
             SupplierNotFoundException => StatusCodes.Status404NotFound,
             CompanyNameAlreadyExistsException => StatusCodes.Status409Conflict,
+            OrderNotFoundException => StatusCodes.Status404NotFound,
+            OrderNumberAlreadyExistsException => StatusCodes.Status409Conflict,
             _ => StatusCodes.Status500InternalServerError
         };
 
