@@ -23,9 +23,6 @@ public class OrdersController : ControllerBase
     public async Task<IActionResult> GetOrderById(int orderId)
     {
         var orderDto = await _serviceManager.OrderService.GetByIdAsync(orderId);
-        if (orderDto == null)
-            return NotFound();
-
         return Ok(orderDto);
     }
 

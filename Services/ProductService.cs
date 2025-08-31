@@ -3,6 +3,7 @@ using Domain.Repositories;
 using Service.Abstractions;
 using Mapster;
 using Shared.DTOs.Product;
+using Domain.Exceptions;
 
 namespace Services;
 
@@ -21,10 +22,16 @@ public class ProductService : IProductService
         return products.Adapt<IEnumerable<ProductDto>>();
     }
 
-    public async Task<ProductDto?> GetByIdAsync(int productId)
+    public async Task<ProductDto> GetByIdAsync(int productId)
     {
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
-        return product?.Adapt<ProductDto>();
+
+        if(product is null)
+        {
+            throw new ProductNotFoundException("No product exists with given ID");
+        }
+
+        return product.Adapt<ProductDto>();
     }
 
     public async Task<ProductDto> CreateAsync(ProductCreationDto productForCreationDto)
@@ -35,7 +42,7 @@ public class ProductService : IProductService
             .AnyAsync(p => p.ProductName.Equals(product.ProductName));
 
         if (nameExists)
-            return null;
+            throw new ProductNameAlreadyExistsException("Product name is already used");
 
         _repositoryManager.ProductRepository.Add(product);
         await _repositoryManager.SaveChangesAsync();
@@ -48,7 +55,7 @@ public class ProductService : IProductService
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
 
         if (product is null)
-            return;
+            throw new ProductNotFoundException("No product exists with given ID");
 
         productForUpdateDto.Adapt(product);
 
@@ -56,7 +63,7 @@ public class ProductService : IProductService
             .AnyAsync(p => p.ProductName.Equals(product.ProductName) && p.Id != productId);
 
         if (nameExists)
-            return;
+            throw new ProductNameAlreadyExistsException("Product name is already used");
 
         await _repositoryManager.SaveChangesAsync();
     }
@@ -66,7 +73,7 @@ public class ProductService : IProductService
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
 
         if (product is null)
-            return;
+            throw new ProductNotFoundException("No product exists with given ID");
 
         _repositoryManager.ProductRepository.Remove(product);
         await _repositoryManager.SaveChangesAsync();

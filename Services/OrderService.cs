@@ -3,6 +3,7 @@ using Domain.Repositories;
 using Service.Abstractions;
 using Mapster;
 using Shared.DTOs.Order;
+using Domain.Exceptions;
 
 namespace Services;
 
@@ -21,10 +22,14 @@ public class OrderService : IOrderService
         return orders.Adapt<IEnumerable<OrderDto>>();
     }
 
-    public async Task<OrderDto?> GetByIdAsync(int orderId)
+    public async Task<OrderDto> GetByIdAsync(int orderId)
     {
         var order = await _repositoryManager.OrderRepository.GetByIdAsync(orderId);
-        return order?.Adapt<OrderDto>();
+
+        if (order is null)
+            throw new OrderNotFoundException("No order exists with given ID");
+
+        return order.Adapt<OrderDto>();
     }
 
     public async Task<OrderDto?> CreateAsync(OrderCreationDto orderForCreationDto)
@@ -32,10 +37,10 @@ public class OrderService : IOrderService
         var order = orderForCreationDto.Adapt<Order>();
 
         var orderExists = await _repositoryManager.OrderRepository
-            .AnyAsync(o => o.OrderNumber.Equals(order.OrderNumber));
+            .AnyAsync(o => o.OrderNumber.Equals(order.OrderNumber) && o.Id != order.Id);
 
         if (orderExists)
-            return null;
+            throw new OrderNumberAlreadyExistsException("Order number already exists");
 
         _repositoryManager.OrderRepository.Add(order);
         await _repositoryManager.SaveChangesAsync();
@@ -48,7 +53,7 @@ public class OrderService : IOrderService
         var order = await _repositoryManager.OrderRepository.GetByIdAsync(orderId);
 
         if (order is null)
-            return;
+            throw new OrderNotFoundException("No order exists with given ID");
 
         orderForUpdateDto.Adapt(order);
 
@@ -56,7 +61,7 @@ public class OrderService : IOrderService
             .AnyAsync(o => o.OrderNumber.Equals(order.OrderNumber) && o.Id != orderId);
 
         if (orderExists)
-            return;
+            throw new OrderNumberAlreadyExistsException("Order number already exists");
 
         await _repositoryManager.SaveChangesAsync();
     }
@@ -66,7 +71,7 @@ public class OrderService : IOrderService
         var order = await _repositoryManager.OrderRepository.GetByIdAsync(orderId);
 
         if (order is null)
-            return;
+            throw new OrderNotFoundException("No order exists with given ID");
 
         _repositoryManager.OrderRepository.Remove(order);
         await _repositoryManager.SaveChangesAsync();

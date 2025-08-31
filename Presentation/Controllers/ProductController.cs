@@ -22,10 +22,6 @@ public class ProductsController : ControllerBase
     public async Task<IActionResult> GetProductById(int productId)
     {
         var productDto = await _serviceManager.ProductService.GetByIdAsync(productId);
-        if (productDto == null)
-        {
-            return NotFound();
-        }
         return Ok(productDto);
     }
 

@@ -23,10 +23,6 @@ public class CustomersController : ControllerBase
     public async Task<IActionResult> GetCustomerById(int customerId)
     {
         var customerDto = await _serviceManager.CustomerService.GetByIdAsync(customerId);
-        if (customerDto == null)
-        {
-            return NotFound();
-        }
         return Ok(customerDto);
     }
 

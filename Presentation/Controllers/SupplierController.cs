@@ -22,10 +22,6 @@ public class SuppliersController : ControllerBase
     public async Task<IActionResult> GetSupplierById(int supplierId)
     {
         var supplierDto = await _serviceManager.SupplierService.GetByIdAsync(supplierId);
-        if (supplierDto == null)
-        {
-            return NotFound();
-        }
         return Ok(supplierDto);
     }
 
