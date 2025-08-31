@@ -1,8 +1,5 @@
 ﻿namespace Domain.Exceptions;
 
-public class PhoneAlreadyExistsException : Exception
+public class PhoneAlreadyExistsException(string message) : Exception(message)
 {
-    public PhoneAlreadyExistsException(string message) : base(message)
-    {
-    }
 }

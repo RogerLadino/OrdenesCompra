@@ -1,8 +1,5 @@
 ﻿namespace Domain.Exceptions;
 
-public class CustomerNotFoundException : Exception
+public class CustomerNotFoundException(string message) : Exception(message)
 {
-    public CustomerNotFoundException(string message) : base(message)
-    {
-    }
 }

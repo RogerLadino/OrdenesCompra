@@ -1,8 +1,5 @@
 ﻿namespace Domain.Exceptions;
 
-public class EmailAlreadyExistsException : Exception
+public class EmailAlreadyExistsException(string message) : Exception(message)
 {
-    public EmailAlreadyExistsException(string message) : base(message)
-    {
-    }
 }
