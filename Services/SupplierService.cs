@@ -22,14 +22,14 @@ public class SupplierService : ISupplierService
         return suppliers.Adapt<IEnumerable<SupplierDto>>();
     }
 
-    public async Task<SupplierDto?> GetByIdAsync(int supplierId)
+    public async Task<SupplierDto> GetByIdAsync(int supplierId)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
 
         if (supplier is null)
             throw new SupplierNotFoundException("No supplier exists with given ID");
 
-        return supplier?.Adapt<SupplierDto>();
+        return supplier.Adapt<SupplierDto>();
     }
 
     public async Task<SupplierDto> CreateAsync(SupplierCreationDto supplierForCreationDto)
@@ -65,7 +65,7 @@ public class SupplierService : ISupplierService
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
 
         if (supplier is null)
-            throw new SupplierNotFoundException("No supplier exists with given ID")
+            throw new SupplierNotFoundException("No supplier exists with given ID");
 
         supplierForUpdateDto.Adapt(supplier);
 

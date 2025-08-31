@@ -22,7 +22,7 @@ public class ProductService : IProductService
         return products.Adapt<IEnumerable<ProductDto>>();
     }
 
-    public async Task<ProductDto?> GetByIdAsync(int productId)
+    public async Task<ProductDto> GetByIdAsync(int productId)
     {
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
 
@@ -31,7 +31,7 @@ public class ProductService : IProductService
             throw new ProductNotFoundException("No product exists with given ID");
         }
 
-        return product?.Adapt<ProductDto>();
+        return product.Adapt<ProductDto>();
     }
 
     public async Task<ProductDto> CreateAsync(ProductCreationDto productForCreationDto)

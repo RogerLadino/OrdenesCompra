@@ -22,14 +22,14 @@ public class OrderService : IOrderService
         return orders.Adapt<IEnumerable<OrderDto>>();
     }
 
-    public async Task<OrderDto?> GetByIdAsync(int orderId)
+    public async Task<OrderDto> GetByIdAsync(int orderId)
     {
         var order = await _repositoryManager.OrderRepository.GetByIdAsync(orderId);
 
         if (order is null)
             throw new OrderNotFoundException("No order exists with given ID");
 
-        return order?.Adapt<OrderDto>();
+        return order.Adapt<OrderDto>();
     }
 
     public async Task<OrderDto?> CreateAsync(OrderCreationDto orderForCreationDto)

@@ -22,7 +22,7 @@ public class CustomerService : ICustomerService
         return customers.Adapt<IEnumerable<CustomerDto>>();
     }
 
-    public async Task<CustomerDto?> GetByIdAsync(int customerId)
+    public async Task<CustomerDto> GetByIdAsync(int customerId)
     {
         var customer = await _repositoryManager.CustomerRepository.GetByIdAsync(customerId);
 
@@ -31,7 +31,7 @@ public class CustomerService : ICustomerService
             throw new CustomerNotFoundException("No customer exists with given ID");
         }
 
-        return customer?.Adapt<CustomerDto>();
+        return customer.Adapt<CustomerDto>();
     }
 
     public async Task<CustomerDto> CreateAsync(CustomerCreationDto customerForCreationDto)
