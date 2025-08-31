@@ -31,10 +31,12 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 builder.Host.UseSerilog((hostContext, configuration) => {
     configuration.ReadFrom.Configuration(hostContext.Configuration);
 });
-
 
 var app = builder.Build();
 
@@ -52,5 +54,7 @@ app.UseAuthorization();
 app.UseCors("CorsPolicy");
 
 app.MapControllers();
+
+app.UseExceptionHandler();
 
 app.Run();
