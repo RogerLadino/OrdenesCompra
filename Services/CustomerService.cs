@@ -3,6 +3,7 @@ using Domain.Repositories;
 using Service.Abstractions;
 using Mapster;
 using Shared.DTOs.Customers;
+using Domain.Exceptions;
 
 namespace Services;
 
@@ -24,6 +25,12 @@ public class CustomerService : ICustomerService
     public async Task<CustomerDto?> GetByIdAsync(int customerId)
     {
         var customer = await _repositoryManager.CustomerRepository.GetByIdAsync(customerId);
+
+        if(customer is null)
+        {
+            throw new CustomerNotFoundException("No customer exists with given ID");
+        }
+
         return customer?.Adapt<CustomerDto>();
     }
 
@@ -36,7 +43,7 @@ public class CustomerService : ICustomerService
 
         if (emailExists)
         {
-            return null;
+            throw new EmailAlreadyExistsException("Email provided already exists");
         }
 
         var phoneExists = await _repositoryManager.CustomerRepository
@@ -44,7 +51,7 @@ public class CustomerService : ICustomerService
 
         if (phoneExists)
         {
-            return null;
+            throw new PhoneAlreadyExistsException("Phone number provided already exists");
         }
 
         _repositoryManager.CustomerRepository.Add(customer);
@@ -59,7 +66,7 @@ public class CustomerService : ICustomerService
 
         if (customer is null)
         {
-            throw new KeyNotFoundException("Customer not found.");
+            throw new CustomerNotFoundException("No customer exists with given ID");
         }
 
         customerForUpdateDto.Adapt(customer);
@@ -69,7 +76,7 @@ public class CustomerService : ICustomerService
 
         if (emailExists)
         {
-            return;
+            throw new EmailAlreadyExistsException("Email provided is already used");
         }
 
         var phoneExists = await _repositoryManager.CustomerRepository
@@ -77,7 +84,7 @@ public class CustomerService : ICustomerService
 
         if (phoneExists)
         {
-            return;
+            throw new PhoneAlreadyExistsException("Phone number provided is already used");
         }
 
         await _repositoryManager.SaveChangesAsync();
@@ -89,7 +96,7 @@ public class CustomerService : ICustomerService
 
         if (customer is null)
         {
-            return;
+            throw new CustomerNotFoundException("No customer exists with given ID");
         }
 
         _repositoryManager.CustomerRepository.Remove(customer);

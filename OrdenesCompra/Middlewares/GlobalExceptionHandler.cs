@@ -1,4 +1,5 @@
-﻿using LoggingService;
+﻿using Domain.Exceptions;
+using LoggingService;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,9 @@ internal sealed class GlobalExceptionHandler(
         httpContext.Response.StatusCode = exception switch
         {
             ApplicationException => StatusCodes.Status400BadRequest,
+            EmailAlreadyExistsException => StatusCodes.Status409Conflict,
+            PhoneAlreadyExistsException => StatusCodes.Status409Conflict,
+            CustomerNotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
 
