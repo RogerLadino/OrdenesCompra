@@ -1,15 +1,17 @@
 using Domain.Repositories;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using Microsoft.EntityFrameworkCore;
 using OrdenesCompra.Extensions;
 using Persistence;
 using Persistence.Repositories;
+using Serilog;
 using Service.Abstractions;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Service extensions
 builder.Services.ConfigureCors();
+builder.Services.ConfigureLoggerService();
 
 // Add services to the container.
 
@@ -28,6 +30,11 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Host.UseSerilog((hostContext, configuration) => {
+    configuration.ReadFrom.Configuration(hostContext.Configuration);
+});
+
 
 var app = builder.Build();
 
