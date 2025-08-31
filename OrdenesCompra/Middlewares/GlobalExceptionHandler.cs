@@ -20,6 +20,8 @@ internal sealed class GlobalExceptionHandler(
             EmailAlreadyExistsException => StatusCodes.Status409Conflict,
             PhoneAlreadyExistsException => StatusCodes.Status409Conflict,
             CustomerNotFoundException => StatusCodes.Status404NotFound,
+            ProductNameAlreadyExistsException => StatusCodes.Status409Conflict,
+            ProductNotFoundException => StatusCodes.Status404NotFound,
             _ => StatusCodes.Status500InternalServerError
         };
 
