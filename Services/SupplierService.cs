@@ -3,6 +3,7 @@ using Domain.Repositories;
 using Service.Abstractions;
 using Mapster;
 using Shared.DTOs.Supplier;
+using Domain.Exceptions;
 
 namespace Services;
 
@@ -24,6 +25,10 @@ public class SupplierService : ISupplierService
     public async Task<SupplierDto?> GetByIdAsync(int supplierId)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
+
+        if (supplier is null)
+            throw new SupplierNotFoundException("No supplier exists with given ID");
+
         return supplier?.Adapt<SupplierDto>();
     }
 
@@ -32,22 +37,22 @@ public class SupplierService : ISupplierService
         var supplier = supplierForCreationDto.Adapt<Supplier>();
 
         var companyNameExists = await _repositoryManager.SupplierRepository
-            .AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName));
+            .AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName) && s.Id != supplier.Id);
 
         if (companyNameExists)
-            return null;
+            throw new CompanyNameAlreadyExistsException("Company name provided already exists");
 
         var emailExists = await _repositoryManager.SupplierRepository
-            .AnyAsync(s => s.Email.Equals(supplier.Email));
+            .AnyAsync(s => s.Email.Equals(supplier.Email) && s.Id != supplier.Id);
 
         if (emailExists)
-            return null;
+            throw new EmailAlreadyExistsException("Email provided already exists");
 
         var phoneExists = await _repositoryManager.SupplierRepository
-            .AnyAsync(s => s.Phone.Equals(supplier.Phone));
+            .AnyAsync(s => s.Phone.Equals(supplier.Phone) && s.Id != supplier.Id);
 
         if (phoneExists)
-            return null;
+            throw new PhoneAlreadyExistsException("Phone number provided already exists");
 
         _repositoryManager.SupplierRepository.Add(supplier);
         await _repositoryManager.SaveChangesAsync();
@@ -58,8 +63,9 @@ public class SupplierService : ISupplierService
     public async Task UpdateAsync(int supplierId, SupplierDto supplierForUpdateDto)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
+
         if (supplier is null)
-            return;
+            throw new SupplierNotFoundException("No supplier exists with given ID")
 
         supplierForUpdateDto.Adapt(supplier);
 
@@ -67,19 +73,19 @@ public class SupplierService : ISupplierService
             .AnyAsync(s => s.CompanyName.Equals(supplier.CompanyName) && s.Id != supplierId);
 
         if (companyNameExists)
-            return;
+            throw new CompanyNameAlreadyExistsException("Company name provided already exists");
 
         var emailExists = await _repositoryManager.SupplierRepository
             .AnyAsync(s => s.Email.Equals(supplier.Email) && s.Id != supplierId);
 
         if (emailExists)
-            return;
+            throw new EmailAlreadyExistsException("Email provided already exists");
 
         var phoneExists = await _repositoryManager.SupplierRepository
             .AnyAsync(s => s.Phone.Equals(supplier.Phone) && s.Id != supplierId);
 
         if (phoneExists)
-            return;
+            throw new PhoneAlreadyExistsException("Phone number provided already exists");
 
         await _repositoryManager.SaveChangesAsync();
     }
@@ -88,7 +94,7 @@ public class SupplierService : ISupplierService
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
         if (supplier is null)
-            return;
+            throw new SupplierNotFoundException("No supplier exists with given ID");
 
         _repositoryManager.SupplierRepository.Remove(supplier);
         await _repositoryManager.SaveChangesAsync();
