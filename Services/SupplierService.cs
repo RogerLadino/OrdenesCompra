@@ -72,6 +72,32 @@ public class SupplierService : ISupplierService
         await _repositoryManager.UnitOfWork.SaveChangesAsync();
     }
 
+    public async Task<SupplierDto?> UpdateAsync(int supplierId, SupplierUpdateDto supplierForUpdateDto)
+    {
+        var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);
+        if (supplier is null)
+        {
+            return null;
+        }
+
+        supplier.CompanyName = supplierForUpdateDto.CompanyName;
+        supplier.ContactName = supplierForUpdateDto.ContactName;
+        supplier.ContactTitle = supplierForUpdateDto.ContactTitle;
+        supplier.City = supplierForUpdateDto.City;
+        supplier.Country = supplierForUpdateDto.Country;
+        supplier.Phone = supplierForUpdateDto.Phone;
+        supplier.Email = supplierForUpdateDto.Email;
+        supplier.Fax = supplierForUpdateDto.Fax;
+
+        // Validar que no exista otro supplier con el mismo nombre
+        var allSuppliers = await _repositoryManager.SupplierRepository.GetAllAsync();
+        if (allSuppliers.Any(s => s.CompanyName == supplier.CompanyName && s.Id != supplierId))
+            return null;
+
+        await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        return supplier.Adapt<SupplierDto>();
+    }
+
     public async Task DeleteAsync(int supplierId)
     {
         var supplier = await _repositoryManager.SupplierRepository.GetByIdAsync(supplierId);

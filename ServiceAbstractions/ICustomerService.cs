@@ -10,7 +10,7 @@ public interface ICustomerService
 
     Task<CustomerDto> CreateAsync(CustomerDto customerForCreationDto);
 
-    Task UpdateAsync(int customerId, CustomerDto customerForUpdateDto);
+    Task<CustomerDto?> UpdateAsync(int customerId, CustomerUpdateDto customerForUpdateDto);
 
     Task DeleteAsync(int customerId);
 }

@@ -36,10 +36,12 @@ public class SuppliersController : ControllerBase
     }
 
     [HttpPut("{supplierId:int}")]
-    public async Task<IActionResult> UpdateSupplier(int supplierId, [FromBody] SupplierDto supplierForUpdateDto)
+    public async Task<IActionResult> UpdateSupplier(int supplierId, [FromBody] SupplierUpdateDto supplierForUpdateDto)
     {
-        await _serviceManager.SupplierService.UpdateAsync(supplierId, supplierForUpdateDto);
-        return NoContent();
+        var updated = await _serviceManager.SupplierService.UpdateAsync(supplierId, supplierForUpdateDto);
+        if (updated == null)
+            return NotFound();
+        return Ok(updated);
     }
 
     [HttpDelete("{supplierId:int}")]
