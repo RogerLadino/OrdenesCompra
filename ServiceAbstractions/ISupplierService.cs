@@ -10,7 +10,7 @@ public interface ISupplierService
 
     Task<SupplierDto> CreateAsync(SupplierDto supplierForCreationDto);
 
-    Task UpdateAsync(int supplierId, SupplierDto supplierForUpdateDto);
+    Task<SupplierDto?> UpdateAsync(int supplierId, SupplierUpdateDto supplierForUpdateDto);
 
     Task DeleteAsync(int supplierId);
 }

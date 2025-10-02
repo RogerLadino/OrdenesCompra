@@ -59,28 +59,29 @@ public class ProductService : IProductService
         return product.Adapt<ProductDto>();
     }
 
-    public async Task UpdateAsync(int productId, ProductDto productForUpdateDto)
+    public async Task<ProductDto?> UpdateAsync(int productId, ProductUpdateDto productForUpdateDto)
     {
         var product = await _repositoryManager.ProductRepository.GetByIdAsync(productId);
-
         if (product is null)
         {
-            return;
+            return null;
         }
 
-        productForUpdateDto.Adapt(product);
+        product.ProductName = productForUpdateDto.ProductName;
+        product.SupplierId = productForUpdateDto.SupplierId;
+        product.UnitPrice = productForUpdateDto.UnitPrice;
+        product.Package = productForUpdateDto.Package;
+        product.IsDiscontinued = productForUpdateDto.IsDiscontinued;
 
-        if (await _repositoryManager.ProductRepository.IdExists(product.Id))
+        var existsWithName = (await _repositoryManager.ProductRepository.GetAllAsync())
+            .Any(p => p.ProductName == product.ProductName && p.Id != productId);
+        if (existsWithName)
         {
-            return;
-        }
-
-        if (await _repositoryManager.ProductRepository.NameExists(product.ProductName))
-        {
-            return;
+            return null;
         }
 
         await _repositoryManager.UnitOfWork.SaveChangesAsync();
+        return product.Adapt<ProductDto>();
     }
 
     public async Task DeleteAsync(int productId)

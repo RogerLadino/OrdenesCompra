@@ -36,10 +36,12 @@ public class CustomersController : ControllerBase
     }
 
     [HttpPut("{customerId:int}")]
-    public async Task<IActionResult> UpdateCustomer(int customerId, [FromBody] CustomerDto customerForUpdateDto)
+    public async Task<IActionResult> UpdateCustomer(int customerId, [FromBody] CustomerUpdateDto customerForUpdateDto)
     {
-        await _serviceManager.CustomerService.UpdateAsync(customerId, customerForUpdateDto);
-        return NoContent();
+        var updated = await _serviceManager.CustomerService.UpdateAsync(customerId, customerForUpdateDto);
+        if (updated == null)
+            return NotFound();
+        return Ok(updated);
     }
 
     [HttpDelete("{customerId:int}")]
